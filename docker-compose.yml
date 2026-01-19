@@ -1,0 +1,37 @@
+# Docker Compose for Multilingual Text Processing
+version: '3.8'
+
+services:
+  multilingual-nlp:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      - PYTHONPATH=/app
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./models:/app/models
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Optional: Add a database service
+  # postgres:
+  #   image: postgres:13
+  #   environment:
+  #     POSTGRES_DB: multilingual_nlp
+  #     POSTGRES_USER: nlp_user
+  #     POSTGRES_PASSWORD: nlp_password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   ports:
+  #     - "5432:5432"
+
+# volumes:
+#   postgres_data:
